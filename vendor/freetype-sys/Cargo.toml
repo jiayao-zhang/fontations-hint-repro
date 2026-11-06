@@ -1,0 +1,34 @@
+[package]
+edition = "2018"
+name = "freetype-sys"
+version = "0.23.0"
+authors = ["Coeuvre <coeuvre@gmail.com>"]
+build = "build.rs"
+links = "freetype"
+autobins = false
+autoexamples = false
+autotests = false
+autobenches = false
+description = "Low level binding for FreeType font library"
+homepage = "https://github.com/PistonDevelopers/freetype-sys"
+readme = "README.md"
+keywords = ["freetype", "ffi"]
+license = "MIT"
+repository = "https://github.com/PistonDevelopers/freetype-sys.git"
+publish = false
+
+[lib]
+name = "freetype_sys"
+path = "src/lib.rs"
+
+[build-dependencies.cc]
+version = "1"
+
+[build-dependencies.pkg-config]
+version = "0.3.11"
+
+[build-dependencies.cmake]
+version = "0.1"
+
+[features]
+bundled = []

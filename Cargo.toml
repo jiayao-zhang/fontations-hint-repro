@@ -1,0 +1,9 @@
+[package]
+name = "fontations-hint-repro"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+skrifa = "0.44"
+freetype-sys = { path = "vendor/freetype-sys", features = ["bundled"] }
