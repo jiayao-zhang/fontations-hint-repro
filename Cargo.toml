@@ -7,3 +7,4 @@ publish = false
 [dependencies]
 skrifa = "0.44"
 freetype-sys = { path = "vendor/freetype-sys", features = ["bundled"] }
+tiny-skia = "0.11"

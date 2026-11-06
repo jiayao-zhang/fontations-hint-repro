@@ -12,31 +12,54 @@ The binary has two parts:
   `FT_LOAD_NO_HINTING`, `FT_LOAD_TARGET_NORMAL`, `FT_LOAD_TARGET_LCD`, `FT_LOAD_TARGET_LCD_V`
   and `FT_LOAD_TARGET_MONO`, and prints the lowest outline point for each.
 
+It also writes `comparison.png`, which draws the glyph with both libraries and marks the text
+axes.
+
 ## Run
 
 ```powershell
 cargo run --release
 # or explicitly:
-cargo run --release -- "C:/Windows/Fonts/simsun.ttc" M 42.6
+cargo run --release -- "C:/Windows/Fonts/simsun.ttc" M 100 comparison.png
 ```
 
-## Expected output (Windows 10/11, SimSun from `C:/Windows/Fonts/simsun.ttc`)
+## Output image
+
+![skrifa vs FreeType](comparison.png)
+
+Four panels, left to right:
+
+1. skrifa, `Target::Smooth { mode: Normal }` (hinting with backward compatibility off)
+2. skrifa, `Target::Smooth { mode: Lcd, preserve_linear_metrics: true }` (backward compatibility
+   forced on)
+3. FreeType, `FT_LOAD_TARGET_NORMAL`
+4. FreeType, `FT_LOAD_TARGET_LCD`
+
+Every panel draws the glyph outline plus the text axes:
+
+- **red line**: x axis, i.e. the baseline (`y = 0` in glyph space)
+- **blue line**: y axis, i.e. the glyph origin (`x = 0` in glyph space)
+- **dashed magenta line**: the lowest outline point, drawn only when it falls below the baseline
+
+The second panel shows the bug: two points of the `M` apex are moved 0.34 em below the
+baseline, so the middle vertex pokes through the red baseline, while the other three panels keep
+the glyph on the baseline.
+
+## Console output (Windows 10/11, SimSun from `C:/Windows/Fonts/simsun.ttc`, 100 ppem)
 
 ```
 --- skrifa (fontations) ---
-unhinted                           min_y =     0.67  points below baseline: 0
-hinted Normal target               min_y =     0.00  points below baseline: 0
-hinted backward-compatibility      min_y =   -14.45  points below baseline: 2
-    offending point: (10.08, -14.45)
-    offending point: (10.42, -14.45)
-hinted Mono target                 min_y =     0.00  points below baseline: 0
+unhinted                           min_y =     1.56  points below baseline: 0
+hinted Normal target               min_y =     1.00  points below baseline: 0
+hinted backward-compatibility      min_y =   -32.78  points below baseline: 2
+hinted Mono target                 min_y =     1.00  points below baseline: 0
 
 --- FreeType ---
-no hinting                         min_y =     0.67  points below baseline: 0
-target Normal                      min_y =     0.00  points below baseline: 0
-target LCD                         min_y =     0.00  points below baseline: 0
-target LCD_V                       min_y =     0.00  points below baseline: 0
-target Mono                        min_y =     0.00  points below baseline: 0
+no hinting                         min_y =     1.56  points below baseline: 0
+target Normal                      min_y =     1.00  points below baseline: 0
+target LCD                         min_y =     1.00  points below baseline: 0
+target LCD_V                       min_y =     1.00  points below baseline: 0
+target Mono                        min_y =     1.00  points below baseline: 0
 ```
 
 ## What this shows
